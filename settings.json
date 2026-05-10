@@ -1,0 +1,9 @@
+{
+  "autoDeleteTrash": true,
+  "trashRetentionDays": 3,
+  "thumbnailQuality": "low",
+  "theme": "dark",
+  "maxConcurrentUploads": 5,
+  "vaultPassword": "damindu2003",
+  "isVaultSetupDone": true
+}
