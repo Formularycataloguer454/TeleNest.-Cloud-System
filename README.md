@@ -86,6 +86,18 @@ System-wide notification center for all operations — uploads, moves, deletions
 </tr>
 </table>
 
+## 📸 Screenshots
+
+<div align="center">
+
+| **Landing Page** | **Node Categories** |
+|:---:|:---:|
+| <img src="public/screenshots/landing.png" width="400" /> | <img src="public/screenshots/nodes.png" width="400" /> |
+| **Main Dashboard** | **Private Vault** |
+| <img src="public/screenshots/dashboard.png" width="400" /> | <img src="public/screenshots/vault.png" width="400" /> |
+
+</div>
+
 ---
 
 ## 🛠️ Tech Stack
