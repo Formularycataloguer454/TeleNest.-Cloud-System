@@ -120,7 +120,13 @@ System-wide notification center for all operations — uploads, moves, deletions
 ### 🚀 Getting Started
 
 #### ⚡ Quick Install (Windows)
-Copy and paste this into your PowerShell to clone and setup everything in one go:
+
+**Option 1: Command Prompt (CMD)** - Recommended
+```cmd
+git clone https://github.com/DaminduRat/TeleNest.-Cloud-System.git && cd TeleNest.-Cloud-System && setup.bat
+```
+
+**Option 2: PowerShell**
 ```powershell
 git clone https://github.com/DaminduRat/TeleNest.-Cloud-System.git; cd TeleNest.-Cloud-System; .\setup.bat
 ```
