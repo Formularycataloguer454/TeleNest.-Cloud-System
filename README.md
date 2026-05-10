@@ -1,76 +1,242 @@
-# TeleNest Cloud 🛡️🚀✨
+<div align="center">
 
-**Your Private Nest in the Cloud - Powered by Telegram.**
+<img src="public/logo.png" alt="TeleNest Logo" width="120" />
 
-TeleNest Cloud is a high-performance, private cloud storage solution that leverages Telegram's infinite infrastructure to provide secure, encrypted, and free storage for all your media and documents.
+# TeleNest. Cloud System
 
-![TeleNest Logo](public/logo.png)
+### *Your Private Nest in the Cloud — Powered by Telegram*
 
-## 🌟 Key Features
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
+[![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
+[![Telegram](https://img.shields.io/badge/Telegram-API-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://core.telegram.org)
+[![License](https://img.shields.io/badge/License-MIT-FACC15?style=for-the-badge)](LICENSE)
+[![Author](https://img.shields.io/badge/By-DaminduR-FF6B6B?style=for-the-badge&logo=github)](https://damindur.com)
 
-- **Infinite Storage**: Harness the power of Telegram's MTProto-secured servers for unlimited file storage.
-- **Node-Based Organization**: Group your files into "Nodes" (Private Channels) for superior organization.
-- **Premium Interface**: A stunning, modern UI with glassmorphism, fluid animations, and dark mode.
-- **Smart Categorization**: Automatically categorizes your files into Images, Videos, Audio, and Documents.
-- **Private Vault**: Secure your sensitive files with an extra layer of password protection and auto-locking.
-- **Instant Streaming**: Stream high-quality videos and audio directly from your cloud nodes.
-- **Public Sharing**: Generate secure, shareable links for any file or folder.
-- **Mobile Responsive**: Fully optimized for Desktop, Tablet, and Mobile devices.
+<br/>
 
-## 🛠️ Technology Stack
+> **TeleNest transforms your Telegram account into a powerful, private, and infinite cloud storage system — with a premium dashboard you'll actually love using.**
 
-- **Frontend**: React 19, Vite, Framer Motion, Lucide React, Axios.
-- **Backend**: Node.js, Express, GramJS (Telegram API).
-- **Styling**: Vanilla CSS with modern variables and Glassmorphism.
+<br/>
 
-## 🚀 Getting Started (Local Setup)
+[🚀 Get Started](#-getting-started) · [✨ Features](#-features) · [🛠️ Tech Stack](#%EF%B8%8F-tech-stack) · [📸 Screenshots](#-screenshots) · [🤝 Contributing](#-contributing)
 
-Follow these steps to run TeleNest Cloud on your local machine:
+</div>
+
+---
+
+## ✨ Features
+
+<table>
+<tr>
+<td width="50%">
+
+### 🗂️ Smart Node Organization
+Organize your files into **Cloud Nodes** (private Telegram channels). Create, rename, and manage as many nodes as you need.
+
+</td>
+<td width="50%">
+
+### 🔒 Private Vault
+A password-protected, auto-locking vault for your most sensitive files. Zero trace, zero compromise.
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🎬 Instant Streaming
+Stream **videos and audio** directly from your Telegram cloud nodes — no download required.
+
+</td>
+<td width="50%">
+
+### ⭐ Favorites & Trash
+Star your most-used files for lightning-fast access. A smart Trash Vault auto-cleans after 3 days.
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 🔗 Public Link Sharing
+Generate secure, shareable links for **any file or folder** in your cloud — one click, anyone can access.
+
+</td>
+<td width="50%">
+
+### 🔍 Blazing-Fast Search
+Full-text search across **all your cloud nodes** simultaneously, with real-time results.
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+### 📱 Fully Mobile Responsive
+A premium experience from the 4K monitor to the phone in your pocket. Sidebar drawer, adaptive grids — all included.
+
+</td>
+<td width="50%">
+
+### 🔔 Real-time Notifications
+System-wide notification center for all operations — uploads, moves, deletions — keep track of everything.
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| **Frontend Framework** | React 19 + TypeScript |
+| **Build Tool** | Vite 8 |
+| **Animations** | Framer Motion |
+| **Icons** | Lucide React |
+| **HTTP Client** | Axios |
+| **Routing** | React Router DOM v7 |
+| **Backend Runtime** | Node.js + Express |
+| **Telegram API** | GramJS (MTProto) |
+| **Styling** | Vanilla CSS + CSS Variables (Glassmorphism) |
+| **Desktop App** | Electron |
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (v18 or higher recommended)
-- [NPM](https://www.npmjs.com/) (comes with Node.js)
-- A Telegram Account
 
-### 1. Clone the Repository
+- **[Node.js](https://nodejs.org/)** v18 or higher
+- **npm** (comes with Node.js)
+- A **Telegram** account
+
+### Installation
+
+**1. Clone the Repository**
 ```bash
 git clone https://github.com/DaminduRat/TeleNest.-Cloud-System.git
-cd telenest-cloud
+cd TeleNest.-Cloud-System
 ```
 
-### 2. Install Dependencies
-Install dependencies for both the root and the server:
+**2. Install All Dependencies**
+
+*Windows:*
 ```bash
+# Just double-click setup.bat, OR run manually:
 npm install
-cd server && npm install
+cd server
+npm install
 cd ..
 ```
 
-### 3. Run the Application
-Start both the backend server and the frontend development environment with one command:
+*Mac / Linux:*
+```bash
+npm install && cd server && npm install && cd ..
+```
+
+**3. Start the Application**
 ```bash
 npm start
 ```
 
-Once started:
-- **Frontend**: `http://localhost:5173`
-- **Backend API**: `http://localhost:3001`
+| Service | URL |
+|---|---|
+| 🌐 Frontend | `http://localhost:5173` |
+| ⚙️ Backend API | `http://localhost:3001` |
 
-### 4. Initial Setup
-When you first open the app, it will guide you through the setup:
-- Enter your Phone Number.
-- Verify with the Telegram Login Code.
-- TeleNest will automatically create the necessary private channels (Nodes) in your Telegram account to act as your storage engine.
+**4. First-Time Setup**
 
-## 🛡️ Privacy & Security
-TeleNest is built with a **Zero-Knowledge Architecture** philosophy:
-- **Local Sessions**: Your Telegram session and authorization data are stored ONLY on your local machine.
-- **End-to-End**: Files move directly between your machine and Telegram's encrypted servers.
-- **No Third-Party Access**: TeleNest does not use any central database for your files; it reads directly from your own Telegram account.
-
-## 👨‍💻 Developed by
-**DaminduR**  
-[damindur.com](https://damindur.com)
+On your first visit, TeleNest will guide you through:
+1. Enter your **Telegram Phone Number**
+2. Enter the **Login Code** sent to your Telegram
+3. TeleNest automatically creates private channels as your storage nodes
+4. Done! Your personal cloud is ready. ☁️
 
 ---
-*Note: This project is for educational and personal use. Ensure you comply with Telegram's Terms of Service.*
+
+## 🏗️ Project Architecture
+
+```
+telenest-cloud/
+├── 📁 public/              # Static assets (logo, icons)
+├── 📁 server/
+│   ├── index.js            # Express API server (all REST endpoints)
+│   └── telegram.js         # GramJS Telegram client (file I/O engine)
+├── 📁 src/
+│   ├── 📁 components/
+│   │   ├── FolderCard.tsx  # Node/folder card UI component
+│   │   ├── Sidebar.tsx     # Responsive navigation sidebar
+│   │   ├── SettingsView.tsx # Advanced settings panel
+│   │   └── TelegramManager.tsx # Account & status manager
+│   ├── 📁 pages/
+│   │   ├── Dashboard.tsx   # Main app shell (all sections)
+│   │   ├── Landing.tsx     # Auth / login page
+│   │   └── Initialization.tsx # First-time setup wizard
+│   ├── index.css           # Global design system & CSS variables
+│   └── main.tsx            # App entry point
+├── .gitignore
+├── setup.bat               # Windows one-click setup
+├── package.json
+└── README.md
+```
+
+---
+
+## 🛡️ Privacy & Security
+
+TeleNest is built with a **Zero-Knowledge Architecture** philosophy:
+
+- 🔐 **Local Sessions Only** — Your Telegram session is stored exclusively on **your own machine**. No server ever sees it.
+- 📡 **Direct Encryption** — Files travel directly between your device and Telegram's MTProto-encrypted servers.
+- 🚫 **No Third Parties** — TeleNest has no central database, no analytics, no tracking. Your data is yours.
+- 🗝️ **Dynamic Credentials** — API keys are entered through the UI at runtime, never hardcoded in source.
+
+---
+
+## 🤖 Built With AI — Vibe Coded
+
+This project was designed and built using the **Vibe Coding** methodology — leveraging cutting-edge AI models to accelerate every aspect of development, from architecture to pixel-perfect UI.
+
+<div align="center">
+
+| AI Tool | Role |
+|---|---|
+| 🔵 **Google Gemini** | Architecture planning, logic design & research |
+| 🟣 **Claude (Anthropic)** | Code refinement, debugging & component design |
+| ⚡ **Antigravity (by Google DeepMind)** | Full-stack implementation, feature building & GitHub push |
+
+*"The future of development is humans with taste, guided by AI with capability."*
+
+</div>
+
+---
+
+## 👨‍💻 Developer
+
+<div align="center">
+
+<br/>
+
+**DaminduR**
+
+*Full-Stack Developer · Vibe Coder · Creator of TeleNest*
+
+[![Portfolio](https://img.shields.io/badge/🌐_Portfolio-damindur.com-FACC15?style=for-the-badge)](https://damindur.com)
+[![GitHub](https://img.shields.io/badge/GitHub-DaminduRat-181717?style=for-the-badge&logo=github)](https://github.com/DaminduRat)
+
+<br/>
+
+</div>
+
+---
+
+<div align="center">
+
+**⭐ If you found this project useful, please give it a star! ⭐**
+
+*TeleNest Cloud — © 2026 DaminduR. All rights reserved.*
+
+</div>
