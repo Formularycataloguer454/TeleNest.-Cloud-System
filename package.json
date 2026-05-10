@@ -1,7 +1,18 @@
 {
   "name": "telenest-cloud",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "TeleNest Cloud is a premium, secure, and infinite cloud storage system powered by Telegram's infrastructure. Features include smart nodes, private vault, and instant streaming.",
+  "keywords": [
+    "telenest",
+    "cloud-storage",
+    "telegram-cloud",
+    "private-storage",
+    "mtproto",
+    "infinite-storage",
+    "vibe-coding"
+  ],
+  "author": "DaminduR",
   "type": "module",
   "scripts": {
     "dev": "vite",
