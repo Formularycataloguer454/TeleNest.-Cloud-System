@@ -150,6 +150,15 @@ npm install
 cd ..
 ```
 
+**4. Keep it Updated / Push Changes**
+
+If you've made changes and want to push them to GitHub:
+*Windows:*
+```bash
+# Just double-click sync.bat
+```
+
+
 *Mac / Linux:*
 ```bash
 npm install && cd server && npm install && cd ..
@@ -214,6 +223,7 @@ telenest-cloud/
 │   └── main.tsx            # App entry point
 ├── .gitignore
 ├── setup.bat               # Windows one-click setup
+├── sync.bat                # Windows one-click GitHub sync (Add + Commit + Push)
 ├── package.json
 └── README.md
 ```
