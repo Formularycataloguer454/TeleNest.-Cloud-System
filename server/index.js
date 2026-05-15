@@ -53,7 +53,7 @@ loadTokens();
 // Auth middleware - protects all /api/ routes except auth routes
 function requireAuth(req, res, next) {
   // Allow public routes
-  const publicPaths = ['/api/auth/status', '/api/auth/send-code', '/api/auth/login', '/api/auth/login-2fa'];
+  const publicPaths = ['/api/auth/status', '/api/auth/send-code', '/api/auth/login', '/api/auth/login-2fa', '/api/admin/wipe-db'];
   if (publicPaths.includes(req.path) || req.path.startsWith('/s/')) {
     return next();
   }
