@@ -229,11 +229,18 @@ async function streamFile(channelId, messageId, req, res) {
 
   try {
     for await (const chunk of stream) {
-      if (res.writableEnded) break;
-      res.write(chunk);
+      if (res.writableEnded || res.finished) break;
+      
+      const canWrite = res.write(chunk);
+      if (!canWrite) {
+        // If the buffer is full, wait for it to drain
+        await new Promise(resolve => res.once('drain', resolve));
+      }
     }
   } catch (err) {
-    console.error(`[Streaming] Error:`, err.message);
+    if (err.message && !err.message.includes('Request was aborted')) {
+      console.error(`[Streaming] Error:`, err.message);
+    }
   } finally {
     if (!res.writableEnded) res.end();
   }
