@@ -5,7 +5,7 @@ import {
   Search, Plus, Bell, CheckCircle, 
   ArrowLeft, Download, Grid, List as ListIcon, 
   Image as ImageIcon, Video, Headphones, FileText, Trash2, Copy, 
-  Move, CheckSquare, Square, X, FolderPlus, Folder, Eye, Star, RefreshCw, AlertCircle, Share2, Lock, ShieldCheck, Menu
+  Move, CheckSquare, Square, X, FolderPlus, Folder, Eye, Star, RefreshCw, AlertCircle, Share2, Lock, ShieldCheck, Menu, Cloud
 } from 'lucide-react';
 import axios from 'axios';
 import Sidebar from '../components/Sidebar';
@@ -127,6 +127,7 @@ const Dashboard = () => {
   const [isRenameModalOpen, setIsRenameModalOpen] = useState(false);
   const [folderToRename, setFolderToRename] = useState<string | null>(null);
   const [renamedFolderName, setRenamedFolderName] = useState('');
+  const [events, setEvents] = useState<any[]>([]);
 
   const [previewFile, setPreviewFile] = useState<any>(null);
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
@@ -358,7 +359,14 @@ const Dashboard = () => {
       .catch(() => setFetchingFiles(false));
   };
 
-  useEffect(() => { fetchFolders(); }, []);
+  const fetchEvents = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/workspace/events`);
+      setEvents(res.data || []);
+    } catch (err) {}
+  };
+
+  useEffect(() => { fetchFolders(); fetchEvents(); }, []);
 
   const [uploadStats, setUploadStats] = useState<{ total: number, done: number }>({ total: 0, done: 0 });
 
@@ -719,7 +727,6 @@ const Dashboard = () => {
       const greeting = hours < 12 ? 'Good Morning' : hours < 17 ? 'Good Afternoon' : 'Good Evening';
       
       const totalFiles = folders.reduce((sum, f) => sum + (f.count || 0), 0);
-      const totalNodes = folders.length;
       const totalShared = (sharedFiles.length || 0) + (folderShares.length || 0);
 
       return (
