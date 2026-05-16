@@ -108,7 +108,7 @@ const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('dashboard');
   const [isUploading, setIsUploading] = useState(false);
-  const [, setUploadProgress] = useState(0);
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [folders, setFolders] = useState<any[]>([]);
   const [, setLoading] = useState(true);
   const [activeFolder, setActiveFolder] = useState<string | null>(null);
@@ -360,7 +360,7 @@ const Dashboard = () => {
 
   useEffect(() => { fetchFolders(); }, []);
 
-  const [, setUploadStats] = useState<{ total: number, done: number }>({ total: 0, done: 0 });
+  const [uploadStats, setUploadStats] = useState<{ total: number, done: number }>({ total: 0, done: 0 });
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
