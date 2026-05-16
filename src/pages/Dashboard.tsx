@@ -119,7 +119,7 @@ const Dashboard = () => {
   const [selectedFiles, setSelectedFiles] = useState<any[]>([]);
   const [isActionModalOpen, setIsActionModalOpen] = useState(false);
   const [actionType, setActionType] = useState<'move' | 'copy' | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [, setIsProcessing] = useState(false);
   
   const [isNewFolderModalOpen, setIsNewFolderModalOpen] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
@@ -361,21 +361,6 @@ const Dashboard = () => {
   useEffect(() => { fetchFolders(); }, []);
 
   const [uploadStats, setUploadStats] = useState<{ total: number, done: number }>({ total: 0, done: 0 });
-
-  const handleRefreshStats = async () => {
-    try {
-      setIsProcessing(true);
-      const res = await axios.post(`${API_URL}/workspace/refresh-stats`);
-      if (res.data.success) {
-        setFolders(Object.entries(res.data.db).map(([name, data]: [string, any]) => ({ name, ...data })));
-        showToast('Storage statistics updated!', 'success');
-      }
-    } catch (err) {
-      showToast('Failed to refresh stats', 'error');
-    } finally {
-      setIsProcessing(false);
-    }
-  };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -730,26 +715,100 @@ const Dashboard = () => {
     }
 
     if (activeSection === 'dashboard') {
+      const hours = new Date().getHours();
+      const greeting = hours < 12 ? 'Good Morning' : hours < 17 ? 'Good Afternoon' : 'Good Evening';
+      
+      const totalFiles = folders.reduce((sum, f) => sum + (f.count || 0), 0);
+      const totalNodes = folders.length;
+      const totalShared = (sharedFiles.length || 0) + (folderShares.length || 0);
+
       return (
-        <motion.div key="dash" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '8px' }} className="text-gradient">Node Categories</h1>
-          <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>Aggregated views of all your files across cloud nodes.</p>
-          <div className="grid-folders">
-            {folders.filter(f => f.type === 'system' && !['Downloads', 'Trash'].includes(f.name)).map((folder, idx) => (
-              <div key={idx} onClick={() => { setActiveFolder(folder.name); fetchFiles(folder.name); }}><FolderCard index={idx} {...folder} /></div>
-            ))}
+        <motion.div key="dash" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+          {/* Welcome Header */}
+          <div className="glass-panel" style={{ 
+            padding: '40px', marginBottom: '40px', borderRadius: '32px',
+            background: 'linear-gradient(135deg, rgba(42, 171, 238, 0.1), rgba(0, 0, 0, 0.4))',
+            position: 'relative', overflow: 'hidden'
+          }}>
+            <div style={{ position: 'absolute', top: '-100px', right: '-100px', width: '300px', height: '300px', background: 'radial-gradient(circle, rgba(42, 171, 238, 0.2), transparent 70%)' }} />
+            <div style={{ position: 'relative', zIndex: 1 }}>
+              <h4 style={{ color: 'var(--tg-blue)', textTransform: 'uppercase', letterSpacing: '4px', fontSize: '0.8rem', fontWeight: 800, marginBottom: '12px' }}>Welcome back</h4>
+              <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 900, letterSpacing: '-1.5px', marginBottom: '16px' }}>{greeting}, Damindu<span style={{ color: 'var(--tg-blue)' }}>.</span></h1>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', maxWidth: '600px', lineHeight: 1.6 }}>Your TeleNest Cloud is synchronized and running smoothly. Manage your infinite storage across all nodes from one central hub.</p>
+            </div>
           </div>
 
-          {folders.filter(f => f.type === 'custom').length > 0 && (
-            <>
-                <h2 style={{ fontSize: '1.8rem', fontWeight: 800, marginTop: '48px', marginBottom: '24px' }}>Personal Nodes</h2>
-                <div className="grid-folders">
-                    {folders.filter(f => f.type === 'custom').map((folder, idx) => (
-                        <div key={idx} onClick={() => { setActiveFolder(folder.name); fetchFiles(folder.name); }}><FolderCard index={idx + 10} {...folder} /></div>
-                    ))}
-                </div>
-            </>
-          )}
+          {/* Stat Cards Row */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', marginBottom: '48px' }}>
+            <div className="glass-panel" style={{ padding: '32px', borderRadius: '28px', borderLeft: '4px solid var(--tg-blue)', display: 'flex', alignItems: 'center', gap: '24px' }}>
+              <div style={{ width: '60px', height: '60px', borderRadius: '20px', background: 'rgba(42, 171, 238, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Cloud size={28} color="var(--tg-blue)" /></div>
+              <div>
+                <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Cloud Storage</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>Infinite</div>
+              </div>
+            </div>
+            <div className="glass-panel" style={{ padding: '32px', borderRadius: '28px', borderLeft: '4px solid #FACC15', display: 'flex', alignItems: 'center', gap: '24px' }}>
+              <div style={{ width: '60px', height: '60px', borderRadius: '20px', background: 'rgba(250, 204, 21, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><FileText size={28} color="#FACC15" /></div>
+              <div>
+                <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Total Files</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>{totalFiles}</div>
+              </div>
+            </div>
+            <div className="glass-panel" style={{ padding: '32px', borderRadius: '28px', borderLeft: '4px solid #10b981', display: 'flex', alignItems: 'center', gap: '24px' }}>
+              <div style={{ width: '60px', height: '60px', borderRadius: '20px', background: 'rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Share2 size={28} color="#10b981" /></div>
+              <div>
+                <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Active Shares</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>{totalShared}</div>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '48px' }}>
+            {/* System Nodes Section */}
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800 }}>Core System Nodes</h2>
+                <button onClick={() => setActiveSection('my-files')} style={{ fontSize: '0.85rem', color: 'var(--tg-blue)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 700 }}>View All</button>
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '16px' }}>
+                {folders.filter(f => f.type === 'system' && !['Downloads', 'Trash'].includes(f.name)).slice(0, 4).map((folder, idx) => (
+                  <div key={idx} onClick={() => { setActiveFolder(folder.name); fetchFiles(folder.name); }} style={{ cursor: 'pointer' }}><FolderCard index={idx} {...folder} /></div>
+                ))}
+              </div>
+            </div>
+
+            {/* Quick Actions & Recent Activity */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+               <div className="glass-panel" style={{ padding: '32px', borderRadius: '28px' }}>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '24px' }}>Recent System Events</h3>
+                  {events.length === 0 ? (
+                    <div style={{ textAlign: 'center', padding: '20px', opacity: 0.3 }}>No recent activity to show</div>
+                  ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                      {events.slice(0, 3).map((ev, i) => (
+                        <div key={i} style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+                          <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--tg-blue)', marginTop: '6px', boxShadow: '0 0 10px var(--tg-blue)' }} />
+                          <div>
+                            <div style={{ fontSize: '0.95rem', fontWeight: 700 }}>{ev.title}</div>
+                            <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{ev.message}</div>
+                            <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.2)', marginTop: '4px' }}>{new Date(ev.time).toLocaleTimeString()}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+               </div>
+
+               <div style={{ display: 'flex', gap: '16px' }}>
+                  <button onClick={() => fileInputRef.current?.click()} className="btn-primary" style={{ flex: 1, padding: '16px', borderRadius: '16px', gap: '12px' }}>
+                    <Plus size={20} /> Upload File
+                  </button>
+                  <button onClick={() => setIsNewFolderModalOpen(true)} className="btn-secondary" style={{ flex: 1, padding: '16px', borderRadius: '16px', gap: '12px', background: 'rgba(255,255,255,0.05)', border: '1px solid var(--glass-border)', color: '#fff' }}>
+                    <FolderPlus size={20} /> New Node
+                  </button>
+               </div>
+            </div>
+          </div>
         </motion.div>
       );
     }
@@ -1035,10 +1094,6 @@ const Dashboard = () => {
                 <span className="desktop-only">{isUploading ? `Uploading...` : 'Upload'}</span>
             </motion.button>
             <input type="file" multiple ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileUpload} />
-            
-            <button className={`btn-icon ${isProcessing ? 'spinning' : ''}`} onClick={handleRefreshStats} disabled={isProcessing} title="Refresh Storage Statistics">
-                <RefreshCw size={20} />
-            </button>
             
             <button className="btn-icon" onClick={() => setShowNotifications(!showNotifications)} style={{ position: 'relative' }}>
                 <Bell size={20} />
