@@ -350,52 +350,56 @@ app.post('/api/settings', async (req, res) => {
 
 
 app.get('/api/workspace/folders', async (req, res) => {
-  const db = await getDatabase();
-  const folders = { ...db.folders };
-  const { getFiles } = require('./telegram');
-  const trashedIds = new Set((db.trash || []).map(t => `${t.channelId}_${t.messageId}`));
-  
-  // Try to dynamically compute system folders from cached getFiles
-  const systemFolders = ['Images', 'Videos', 'Documents', 'Audio', 'Downloads'];
-  
   try {
-      const folderNames = Object.keys(db.folders).filter(f => !['Favorites', 'Trash'].includes(f));
-      const fetchPromises = folderNames.map(async (fName) => {
-          const folder = db.folders[fName];
-          const files = await getFiles(folder.id, false); // use cache
-          return files.filter(f => !trashedIds.has(`${folder.id}_${f.id}`));
-      });
-      const results = await Promise.all(fetchPromises);
-      const allFiles = results.flat();
+    const db = await getDatabase();
+    const folders = { ...db.folders };
+    const { getFiles } = require('./telegram');
+    const trashedIds = new Set((db.trash || []).map(t => `${t.channelId}_${t.messageId}`));
+    
+    // Try to dynamically compute system folders from cached getFiles
+    const systemFolders = ['Images', 'Videos', 'Documents', 'Audio', 'Downloads'];
+    
+    try {
+        const folderNames = Object.keys(db.folders).filter(f => !['Favorites', 'Trash'].includes(f));
+        const fetchPromises = folderNames.map(async (fName) => {
+            const folder = db.folders[fName];
+            const files = await getFiles(folder.id, false); // use cache
+            return files.filter(f => !trashedIds.has(`${folder.id}_${f.id}`));
+        });
+        const results = await Promise.all(fetchPromises);
+        const allFiles = results.flat();
 
-      for (const sysFolder of systemFolders) {
-          if (!folders[sysFolder]) continue;
-          const filtered = allFiles.filter(f => {
-              if (sysFolder === 'Images') return f.type.includes('Photo') || (f.mimeType && f.mimeType.startsWith('image/'));
-              if (sysFolder === 'Videos') return f.type.includes('Video') || (f.mimeType && f.mimeType.startsWith('video/'));
-              if (sysFolder === 'Documents') return f.type.includes('Document') && (!f.mimeType || !f.mimeType.startsWith('video/') && !f.mimeType.startsWith('image/') && !f.mimeType.startsWith('audio/'));
-              if (sysFolder === 'Audio') return f.type.includes('Audio') || (f.mimeType && f.mimeType.startsWith('audio/'));
-              if (sysFolder === 'Downloads') return true;
-              return false;
-          });
-          folders[sysFolder].count = filtered.length;
-          folders[sysFolder].size = filtered.reduce((acc, f) => acc + (f.size || 0), 0);
-      }
-  } catch (e) {}
+        for (const sysFolder of systemFolders) {
+            if (!folders[sysFolder]) continue;
+            const filtered = allFiles.filter(f => {
+                if (sysFolder === 'Images') return f.type.includes('Photo') || (f.mimeType && f.mimeType.startsWith('image/'));
+                if (sysFolder === 'Videos') return f.type.includes('Video') || (f.mimeType && f.mimeType.startsWith('video/'));
+                if (sysFolder === 'Documents') return f.type.includes('Document') && (!f.mimeType || !f.mimeType.startsWith('video/') && !f.mimeType.startsWith('image/') && !f.mimeType.startsWith('audio/'));
+                if (sysFolder === 'Audio') return f.type.includes('Audio') || (f.mimeType && f.mimeType.startsWith('audio/'));
+                if (sysFolder === 'Downloads') return true;
+                return false;
+            });
+            folders[sysFolder].count = filtered.length;
+            folders[sysFolder].size = filtered.reduce((acc, f) => acc + (f.size || 0), 0);
+        }
+    } catch (e) {}
 
-  // Dynamically update Favorites stats
-  if (folders['Favorites']) {
-    folders['Favorites'].count = (db.favorites || []).length;
-    folders['Favorites'].size = (db.favorites || []).reduce((acc, f) => acc + (f.size || 0), 0);
+    // Dynamically update Favorites stats
+    if (folders['Favorites']) {
+      folders['Favorites'].count = (db.favorites || []).length;
+      folders['Favorites'].size = (db.favorites || []).reduce((acc, f) => acc + (f.size || 0), 0);
+    }
+    
+    // Dynamically update Trash stats
+    if (folders['Trash']) {
+      folders['Trash'].count = (db.trash || []).length;
+      folders['Trash'].size = (db.trash || []).reduce((acc, f) => acc + (f.size || 0), 0);
+    }
+    
+    res.json(folders);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
-  
-  // Dynamically update Trash stats
-  if (folders['Trash']) {
-    folders['Trash'].count = (db.trash || []).length;
-    folders['Trash'].size = (db.trash || []).reduce((acc, f) => acc + (f.size || 0), 0);
-  }
-  
-  res.json(folders);
 });
 
 app.post('/api/workspace/folders/archive-all', async (req, res) => {
