@@ -64,7 +64,7 @@ async function saveTokens() {
 // Auth middleware - protects all /api/ routes except auth routes
 async function requireAuth(req, res, next) {
   // Allow public routes
-  const publicPaths = ['/api/auth/status', '/api/auth/send-code', '/api/auth/login', '/api/auth/2fa', '/api/admin/wipe-db', '/api/workspace/share-view'];
+  const publicPaths = ['/api/auth/status', '/api/auth/send-code', '/api/auth/login', '/api/auth/2fa', '/api/workspace/share-view'];
   if (publicPaths.includes(req.path) || req.path.startsWith('/s/')) {
     return next();
   }
@@ -110,21 +110,29 @@ async function getUserId() {
   try {
     if (await isAuthorized()) {
       const user = await getMe();
-      if (user && user.id) {
-        return user.id.toString();
-      }
+      if (user && user.id) return user.id.toString();
     }
   } catch (e) {
-    console.error("Error getting user ID:", e.message);
+    console.error("[Security] Failed to get user ID:", e.message);
   }
-  return 'default';
+  return null;
+}
+
+// Security utility: Sanitize error messages sent to client
+function sendError(res, err, status = 500) {
+  const isDev = process.env.NODE_ENV === 'development';
+  console.error(`[Error] ${err.message}`);
+  res.status(status).json({ 
+    error: isDev ? err.message : 'A server error occurred. Please try again later.',
+    code: err.code || 'INTERNAL_ERROR'
+  });
 }
 
 const crypto = require('crypto');
 
 async function getDatabase() {
   const uid = await getUserId();
-  if (uid === 'default') throw new Error('User not identified');
+  if (!uid) throw new Error('User not identified');
   
   if (db) {
     try {
@@ -216,7 +224,7 @@ app.get('/api/auth/status', async (req, res) => {
         });
     }
     res.json({ authorized: false });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.get('/api/admin/debug-env', (req, res) => {
@@ -230,7 +238,7 @@ app.get('/api/admin/debug-env', (req, res) => {
 });
 
 app.post('/api/auth/send-code', async (req, res) => {
-  try { res.json({ phoneCodeHash: await sendCode(req.body.phoneNumber) }); } catch (err) { res.status(500).json({ error: err.message }); }
+  try { res.json({ phoneCodeHash: await sendCode(req.body.phoneNumber) }); } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/auth/login', async (req, res) => {
@@ -247,7 +255,7 @@ app.post('/api/auth/login', async (req, res) => {
       return res.json({ ...result, token, needsInit });
     }
     res.json(result);
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/workspace/refresh-stats', async (req, res) => {
@@ -272,7 +280,7 @@ app.post('/api/workspace/refresh-stats', async (req, res) => {
     
     await saveDatabase(db);
     res.json({ success: true, db: db.folders });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/workspace/clear-thumbnails', async (req, res) => {
@@ -282,7 +290,7 @@ app.post('/api/workspace/clear-thumbnails', async (req, res) => {
       for (const file of files) fs.unlinkSync(path.join(THUMBS_DIR, file));
     }
     res.json({ success: true, cleared: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/auth/logout', async (req, res) => {
@@ -293,7 +301,7 @@ app.post('/api/auth/logout', async (req, res) => {
       await saveTokens();
     }
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 // TEMPORARY: Route to wipe the database (DELETE AFTER USE)
@@ -317,7 +325,7 @@ app.post('/api/admin/wipe-db', async (req, res) => {
     const { resetClient } = require('./telegram');
     await resetClient();
     res.json({ success: true, message: 'Database wiped successfully' });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 
@@ -335,7 +343,7 @@ app.post('/api/auth/2fa', async (req, res) => {
       return res.json({ ...result, token, needsInit });
     }
     res.json(result);
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/workspace/init', async (req, res) => {
@@ -351,7 +359,7 @@ app.post('/api/workspace/init', async (req, res) => {
     }
     await saveDatabase(db);
     res.json({ success: true, db: db.folders });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.get('/api/settings', async (req, res) => {
@@ -363,7 +371,7 @@ app.get('/api/settings', async (req, res) => {
     const settingsPath = path.resolve(__dirname, 'settings.json');
     const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
     res.json(settings);
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/settings', async (req, res) => {
@@ -374,7 +382,7 @@ app.post('/api/settings', async (req, res) => {
     const settingsPath = path.resolve(__dirname, 'settings.json');
     fs.writeFileSync(settingsPath, JSON.stringify(req.body, null, 2));
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 
@@ -438,7 +446,7 @@ app.post('/api/workspace/folders/archive-all', async (req, res) => {
     const channelIds = Object.values(db.folders).map(f => f.id);
     await archiveChannels(channelIds);
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/workspace/sync-folder', async (req, res) => {
@@ -454,7 +462,7 @@ app.post('/api/workspace/sync-folder', async (req, res) => {
       await saveDatabase(db);
     }
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/workspace/wipe-data', async (req, res) => {
@@ -479,7 +487,7 @@ app.post('/api/workspace/wipe-data', async (req, res) => {
     cachedUserId = null;
     invalidateCache('all');
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/workspace/folders/create', async (req, res) => {
@@ -490,7 +498,7 @@ app.post('/api/workspace/folders/create', async (req, res) => {
     db.folders[name] = { id: await createPrivateChannel(`TeleNest_${name}`), count: 0, size: 0, type: 'custom', createdAt: new Date().toISOString() };
     await saveDatabase(db);
     res.json({ success: true, folder: db.folders[name] });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.put('/api/workspace/folders/rename', async (req, res) => {
@@ -502,7 +510,7 @@ app.put('/api/workspace/folders/rename', async (req, res) => {
     delete db.folders[oldName];
     await saveDatabase(db);
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.delete('/api/workspace/folders/:name', async (req, res) => {
@@ -512,7 +520,7 @@ app.delete('/api/workspace/folders/:name', async (req, res) => {
     delete db.folders[req.params.name];
     await saveDatabase(db);
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/workspace/upload', upload.single('file'), async (req, res) => {
@@ -540,7 +548,7 @@ app.post('/api/workspace/upload', upload.single('file'), async (req, res) => {
 
     fs.unlinkSync(file.path);
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 // Favorites and Trash state management
@@ -560,7 +568,7 @@ app.post('/api/workspace/files/star', async (req, res) => {
     else db.favorites.push({ channelId, messageId, name, size, mimeType, date, type, sourceFolder });
     await saveDatabase(db);
     res.json({ success: true, starred: index === -1 });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/workspace/files/trash', async (req, res) => {
@@ -571,7 +579,7 @@ app.post('/api/workspace/files/trash', async (req, res) => {
     db.trash.push({ channelId, messageId, name, size, mimeType, date, deletedAt: new Date().toISOString() });
     await saveDatabase(db);
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/workspace/files/share', async (req, res) => {
@@ -588,7 +596,7 @@ app.post('/api/workspace/files/share', async (req, res) => {
     db.shares.push(share);
     await saveDatabase(db);
     res.json({ success: true, share });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/workspace/folders/share', async (req, res) => {
@@ -603,14 +611,14 @@ app.post('/api/workspace/folders/share', async (req, res) => {
       db.folderShares.push(share);
       await saveDatabase(db);
       res.json({ success: true, share });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { sendError(res, err); }
 });
 
 app.get('/api/workspace/folder-shares', async (req, res) => {
     try {
         const db = await getDatabase();
         res.json(db.folderShares || []);
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { sendError(res, err); }
 });
 
 app.delete('/api/workspace/folder-shares/:hash', async (req, res) => {
@@ -619,7 +627,7 @@ app.delete('/api/workspace/folder-shares/:hash', async (req, res) => {
         db.folderShares = db.folderShares.filter(s => s.hash !== req.params.hash);
         await saveDatabase(db);
         res.json({ success: true });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { sendError(res, err); }
 });
 
 // Public Folder View Endpoint
@@ -728,14 +736,14 @@ app.get('/api/workspace/events', async (req, res) => {
         db.events = []; // Clear after fetching
         await saveDatabase(db);
         res.json(events);
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { sendError(res, err); }
 });
 
 app.get('/api/workspace/shares', async (req, res) => {
     try {
         const db = await getDatabase();
         res.json(db.shares || []);
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { sendError(res, err); }
 });
 
 app.delete('/api/workspace/shares/:hash', async (req, res) => {
@@ -744,7 +752,7 @@ app.delete('/api/workspace/shares/:hash', async (req, res) => {
         db.shares = db.shares.filter(s => s.hash !== req.params.hash);
         await saveDatabase(db);
         res.json({ success: true });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { sendError(res, err); }
 });
 
 // Public Share Endpoint (Preview Page)
@@ -846,7 +854,7 @@ app.post('/api/workspace/files/restore', async (req, res) => {
       }
       await saveDatabase(db);
       res.json({ success: true });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { sendError(res, err); }
 });
 
 setInterval(async () => {
@@ -883,7 +891,7 @@ app.get('/api/vault/status', async (req, res) => {
     try {
         const settings = JSON.parse(fs.readFileSync('./settings.json', 'utf8'));
         res.json({ isSetup: settings.isVaultSetupDone || false });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/vault/setup', async (req, res) => {
@@ -894,7 +902,7 @@ app.post('/api/vault/setup', async (req, res) => {
         settings.isVaultSetupDone = true;
         fs.writeFileSync('./settings.json', JSON.stringify(settings, null, 2));
         res.json({ success: true });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/vault/unlock', async (req, res) => {
@@ -906,7 +914,7 @@ app.post('/api/vault/unlock', async (req, res) => {
         } else {
             res.status(401).json({ error: 'Incorrect vault password' });
         }
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/vault/set-password', async (req, res) => {
@@ -920,7 +928,7 @@ app.post('/api/vault/set-password', async (req, res) => {
         } else {
             res.status(401).json({ error: 'Current password incorrect' });
         }
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { sendError(res, err); }
 });
 
 app.get('/api/workspace/search', async (req, res) => {
@@ -949,7 +957,7 @@ app.get('/api/workspace/search', async (req, res) => {
             }
         }
         res.json(allResults);
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { sendError(res, err); }
 });
 
 app.get('/api/workspace/files/:folderName', async (req, res) => {
@@ -1004,7 +1012,7 @@ app.get('/api/workspace/files/:folderName', async (req, res) => {
     const files = await getFiles(physicalFolder.id);
     const result = files.filter(f => !trashedIds.has(`${physicalFolder.id}_${f.id}`)).map(f => ({ ...f, channelId: physicalFolder.id, isStarred: db.favorites.some(fav => fav.channelId === physicalFolder.id && fav.messageId === f.id) }));
     res.json(result);
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.get('/api/workspace/view/:folderName/:messageId', async (req, res) => {
@@ -1042,7 +1050,7 @@ app.get('/api/workspace/download/:folderName/:messageId', async (req, res) => {
     const { buffer, name } = await downloadFileMedia(actualChannel, req.params.messageId);
     res.set('Content-Disposition', `attachment; filename="${name}"`);
     res.send(buffer);
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 // Simple in-flight dedup
@@ -1125,7 +1133,7 @@ app.post('/api/workspace/files/delete', async (req, res) => {
         }
         await saveDatabase(db);
         res.json({ success: true, trashed: true });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/workspace/files/move-copy', async (req, res) => {
@@ -1146,7 +1154,7 @@ app.post('/api/workspace/files/move-copy', async (req, res) => {
     await moveCopyFiles(fromChannel, toChannel, messageIds, mode);
     invalidateCache(fromChannel); invalidateCache(toChannel);
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 
 app.post('/api/workspace/files/permanent-delete', async (req, res) => {
@@ -1157,7 +1165,7 @@ app.post('/api/workspace/files/permanent-delete', async (req, res) => {
     db.trash = db.trash.filter(f => !(f.channelId === channelId && f.messageId === messageId));
     await saveDatabase(db);
     res.json({ success: true });
-  } catch (err) { res.status(500).json({ error: err.message }); }
+  } catch (err) { sendError(res, err); }
 });
 app.get('/api/telegram/dialogs', async (req, res) => {
   try {
