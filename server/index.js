@@ -62,12 +62,28 @@ async function saveTokens() {
   } catch (e) {}
 }
 // Auth middleware - protects all /api/ routes except auth routes
-function requireAuth(req, res, next) {
+async function requireAuth(req, res, next) {
   // Allow public routes
-  const publicPaths = ['/api/auth/status', '/api/auth/send-code', '/api/auth/login', '/api/auth/2fa', '/api/admin/wipe-db'];
+  const publicPaths = ['/api/auth/status', '/api/auth/send-code', '/api/auth/login', '/api/auth/2fa', '/api/admin/wipe-db', '/api/workspace/share-view'];
   if (publicPaths.includes(req.path) || req.path.startsWith('/s/')) {
     return next();
   }
+
+  // Allow file viewing/streaming if it's a shared resource
+  if (req.path.startsWith('/api/workspace/view/') || 
+      req.path.startsWith('/api/workspace/stream/') || 
+      req.path.startsWith('/api/workspace/thumbnail/')) {
+    const shareHash = req.query.shareHash;
+    if (shareHash) {
+      const db = await getDatabase();
+      const isSharedFolder = (db.folderShares || []).some(s => s.hash === shareHash);
+      const isSharedFile = (db.shares || []).some(s => s.hash === shareHash);
+      if (isSharedFolder || isSharedFile) {
+        return next();
+      }
+    }
+  }
+
   let token = req.headers.authorization?.replace('Bearer ', '');
   if (!token && req.query.token) {
     token = req.query.token;
@@ -681,7 +697,7 @@ app.get('/s/folder/:hash', async (req, res) => {
                         const date = new Date(f.date * 1000).toLocaleDateString();
                         const icon = f.mimeType?.startsWith('image/') ? '🖼️' : f.mimeType?.startsWith('video/') ? '🎬' : f.mimeType?.startsWith('audio/') ? '🎵' : '📄';
                         return `
-                        <a href="/api/workspace/view/${share.folderName}/${f.id}?channelId=${physicalFolder.id}" class="file-item">
+                        <a href="/api/workspace/view/${share.folderName}/${f.id}?channelId=${physicalFolder.id}&shareHash=${req.params.hash}" class="file-item">
                             <div class="icon">${icon}</div>
                             <div class="info">
                                 <div class="name" title="${f.name}">${f.name}</div>
@@ -761,14 +777,14 @@ app.get('/s/:hash', async (req, res) => {
         
         let previewHtml = '';
         if (share.mimeType?.startsWith('image/')) {
-            previewHtml = `<img src="/api/workspace/view/Shared/${share.messageId}?channelId=${share.channelId}" style="max-width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">`;
+            previewHtml = `<img src="/api/workspace/view/Shared/${share.messageId}?channelId=${share.channelId}&shareHash=${req.params.hash}" style="max-width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">`;
         } else if (share.mimeType?.startsWith('video/')) {
-            previewHtml = `<video src="/api/workspace/view/Shared/${share.messageId}?channelId=${share.channelId}" controls style="max-width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"></video>`;
+            previewHtml = `<video src="/api/workspace/view/Shared/${share.messageId}?channelId=${share.channelId}&shareHash=${req.params.hash}" controls style="max-width: 100%; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);"></video>`;
         } else if (share.mimeType?.startsWith('audio/')) {
             previewHtml = `
             <div style="background: rgba(255,255,255,0.05); padding: 40px; border-radius: 32px; border: 1px solid rgba(255,255,255,0.1); width: 100%;">
                 <div style="font-size: 50px; margin-bottom: 20px;">🎵</div>
-                <audio src="/api/workspace/view/Shared/${share.messageId}?channelId=${share.channelId}" controls style="width: 100%;"></audio>
+                <audio src="/api/workspace/view/Shared/${share.messageId}?channelId=${share.channelId}&shareHash=${req.params.hash}" controls style="width: 100%;"></audio>
             </div>`;
         }
 
@@ -804,7 +820,7 @@ app.get('/s/:hash', async (req, res) => {
                     ${previewHtml || '<div style="opacity: 0.2; padding: 40px; border: 2px dashed var(--border); border-radius: 20px;">Preview not available for this file type</div>'}
                 </div>
 
-                <a href="?dl=true" class="btn">
+                <a href="?dl=true&shareHash=${req.params.hash}" class="btn">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                     Download File
                 </a>
