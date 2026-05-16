@@ -318,9 +318,9 @@ const Dashboard = () => {
   };
 
   const fetchFolders = () => {
-    fetch(`${API_URL}/workspace/folders`)
-      .then(res => res.json())
-      .then(data => {
+    axios.get(`${API_URL}/workspace/folders`)
+      .then(res => {
+        const data = res.data;
         const folderList = Object.keys(data).map(name => ({
           name,
           itemCount: data[name].count || 0,
@@ -330,7 +330,8 @@ const Dashboard = () => {
         }));
         setFolders(folderList);
         setLoading(false);
-      });
+      })
+      .catch(() => {});
   };
 
   const fetchFiles = (folderName: string) => {
@@ -338,10 +339,9 @@ const Dashboard = () => {
     setSelectedFiles([]);
     
     // 1. Initial fetch from current state
-    fetch(`${API_URL}/workspace/files/${folderName}`)
-      .then(res => res.json())
-      .then(data => {
-        setFolderFiles(data);
+    axios.get(`${API_URL}/workspace/files/${folderName}`)
+      .then(res => {
+        setFolderFiles(res.data);
         setFetchingFiles(false);
         
         // 2. Trigger silent sync in background (updates stats and generates missing thumbs)
@@ -349,12 +349,13 @@ const Dashboard = () => {
           .then(() => {
             fetchFolders(); // Update sidebar stats
             // 3. Re-fetch files to ensure we have the absolute latest
-            fetch(`${API_URL}/workspace/files/${folderName}`)
-              .then(res => res.json())
-              .then(newData => setFolderFiles(newData));
+            axios.get(`${API_URL}/workspace/files/${folderName}`)
+              .then(res2 => setFolderFiles(res2.data))
+              .catch(() => {});
           })
           .catch(() => {});
-      });
+      })
+      .catch(() => setFetchingFiles(false));
   };
 
   useEffect(() => { fetchFolders(); }, []);

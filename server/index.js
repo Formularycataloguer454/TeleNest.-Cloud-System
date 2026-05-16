@@ -48,17 +48,16 @@ async function saveTokens() {
     } catch (e) { console.error('Failed to save tokens:', e.message); }
   }
 }
-loadTokens();
-
 // Auth middleware - protects all /api/ routes except auth routes
 function requireAuth(req, res, next) {
   // Allow public routes
-  const publicPaths = ['/api/auth/status', '/api/auth/send-code', '/api/auth/login', '/api/auth/login-2fa', '/api/admin/wipe-db'];
+  const publicPaths = ['/api/auth/status', '/api/auth/send-code', '/api/auth/login', '/api/auth/2fa', '/api/admin/wipe-db'];
   if (publicPaths.includes(req.path) || req.path.startsWith('/s/')) {
     return next();
   }
   const token = req.headers.authorization?.replace('Bearer ', '');
   if (!token || !activeTokens.has(token)) {
+    console.warn(`[Auth] BLOCKED ${req.method} ${req.path} — token: ${token ? token.substring(0, 8) + '...' : 'NONE'}, active tokens: ${activeTokens.size}`);
     return res.status(401).json({ error: 'Unauthorized. Please log in.' });
   }
   next();
@@ -186,6 +185,16 @@ app.get('/api/auth/status', async (req, res) => {
     }
     res.json({ authorized: false });
   } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+app.get('/api/admin/debug-env', (req, res) => {
+  res.json({
+    PROJECT_ID: process.env.FIREBASE_PROJECT_ID ? 'Found' : 'Missing',
+    CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL ? 'Found' : 'Missing',
+    PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY ? 'Found' : 'Missing',
+    PORT: process.env.PORT || 'Default (3001)',
+    NODE_ENV: process.env.NODE_ENV || 'Not set'
+  });
 });
 
 app.post('/api/auth/send-code', async (req, res) => {
@@ -1137,4 +1146,10 @@ app.post('/api/telegram/chats/action', async (req, res) => {
 
 app.use((err, req, res, next) => { res.status(500).json({ error: 'Error', details: err.message }); });
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => console.log(`Running on ${PORT}`));
+
+// Load tokens from Firestore BEFORE accepting requests
+(async () => {
+  await loadTokens();
+  console.log(`[Auth] Loaded ${activeTokens.size} active tokens from Firestore`);
+  app.listen(PORT, () => console.log(`Running on ${PORT}`));
+})();
