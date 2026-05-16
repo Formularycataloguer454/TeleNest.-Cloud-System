@@ -726,7 +726,18 @@ const Dashboard = () => {
       const hours = new Date().getHours();
       const greeting = hours < 12 ? 'Good Morning' : hours < 17 ? 'Good Afternoon' : 'Good Evening';
       
-      const totalFiles = folders.reduce((sum, f) => sum + (f.count || 0), 0);
+      const totalFiles = folders.reduce((sum, f) => {
+        // Only count actual storage folders, skip virtual views if any
+        if (f.name === 'Favorites' || f.name === 'Trash') return sum;
+        return sum + (parseInt(f.count) || 0);
+      }, 0);
+      
+      const totalBytes = folders.reduce((sum, f) => {
+        if (f.name === 'Favorites' || f.name === 'Trash') return sum;
+        return sum + (parseInt(f.size) || 0);
+      }, 0);
+      
+      const totalSizeFormatted = formatSize(totalBytes);
       const totalShared = (sharedFiles.length || 0) + (folderShares.length || 0);
 
       return (
@@ -751,7 +762,7 @@ const Dashboard = () => {
               <div style={{ width: '60px', height: '60px', borderRadius: '20px', background: 'rgba(42, 171, 238, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Cloud size={28} color="var(--tg-blue)" /></div>
               <div>
                 <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Cloud Storage</div>
-                <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>Infinite</div>
+                <div style={{ fontSize: '1.8rem', fontWeight: 900 }}>{totalSizeFormatted}</div>
               </div>
             </div>
             <div className="glass-panel" style={{ padding: '32px', borderRadius: '28px', borderLeft: '4px solid #FACC15', display: 'flex', alignItems: 'center', gap: '24px' }}>
