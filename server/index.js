@@ -55,7 +55,10 @@ function requireAuth(req, res, next) {
   if (publicPaths.includes(req.path) || req.path.startsWith('/s/')) {
     return next();
   }
-  const token = req.headers.authorization?.replace('Bearer ', '');
+  let token = req.headers.authorization?.replace('Bearer ', '');
+  if (!token && req.query.token) {
+    token = req.query.token;
+  }
   if (!token || !activeTokens.has(token)) {
     console.warn(`[Auth] BLOCKED ${req.method} ${req.path} — token: ${token ? token.substring(0, 8) + '...' : 'NONE'}, active tokens: ${activeTokens.size}`);
     return res.status(401).json({ error: 'Unauthorized. Please log in.' });

@@ -516,7 +516,8 @@ const Dashboard = () => {
     // For now, I'll fetch settings on mount or use a global-ish state if available.
     // Actually, I can just read it from the localStorage or a quick check.
     const isDataSaver = localStorage.getItem('telenest_datasaver') === 'true';
-    return `${API_URL}/workspace/view/${activeFolder}/${file.id}?source=${source}&channelId=${file.channelId}${isDataSaver ? '&dataSaver=true' : ''}`;
+    const token = localStorage.getItem('token') || '';
+    return `${API_URL}/workspace/view/${activeFolder}/${file.id}?source=${source}&channelId=${file.channelId}${isDataSaver ? '&dataSaver=true' : ''}&token=${token}`;
   };
 
   const openPreview = (file: any) => { setPreviewFile(file); setIsPreviewLoading(true); };
@@ -578,18 +579,28 @@ const Dashboard = () => {
                             {viewMode === 'grid' && (
                               <div className="file-card-preview" onClick={() => openPreview(file)} style={{ width: '100%', height: '140px', background: 'rgba(0,0,0,0.4)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                                  <ThumbnailImage 
-                                    src={`${API_URL}/workspace/thumbnail/${file.channelId}/${file.id}`}
+                                    src={`${API_URL}/workspace/thumbnail/${file.channelId}/${file.id}?token=${localStorage.getItem('token')}`}
                                     fallback={getFileIcon(file.type, '#FACC15')}
                                  />
                                  <div className="hover-play" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.3)', opacity: 0 }}><Eye size={32} color="#fff" /></div>
                               </div>
                             )}
                             <div style={{ padding: viewMode === 'grid' ? '12px' : '0', display: 'flex', flexDirection: viewMode === 'grid' ? 'column' : 'row', alignItems: 'center', gap: '16px', width: '100%' }}>
-                              <div style={{ flex: 1, minWidth: 0, textAlign: 'left', cursor: 'pointer' }} onClick={() => openPreview(file)}>
-                                <div style={{ fontWeight: 600, fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={file.name}>
-                                  {truncateFileName(file.name, file.id)}
+                              <div style={{ flex: 1, minWidth: 0, textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px' }} onClick={() => openPreview(file)}>
+                                {viewMode === 'list' && (
+                                  <div style={{ width: '40px', height: '40px', minWidth: '40px', borderRadius: '8px', overflow: 'hidden', background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                     <ThumbnailImage 
+                                        src={`${API_URL}/workspace/thumbnail/${file.channelId}/${file.id}?token=${localStorage.getItem('token')}`}
+                                        fallback={getFileIcon(file.type, '#FACC15')}
+                                     />
+                                  </div>
+                                )}
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                  <div style={{ fontWeight: 600, fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={file.name}>
+                                    {truncateFileName(file.name, file.id)}
+                                  </div>
+                                  <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{formatSize(file.size)} • in {file.sourceFolder}</div>
                                 </div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{formatSize(file.size)} • in {file.sourceFolder}</div>
                               </div>
                               <div style={{ display: 'flex', gap: '8px' }}>
                                 <button onClick={() => openPreview(file)} className="btn-icon"><Eye size={16} /></button>
@@ -642,7 +653,7 @@ const Dashboard = () => {
                     {viewMode === 'grid' && (
                       <div className="file-card-preview" onClick={() => openPreview(file)} style={{ width: '100%', height: 'clamp(80px, 18vw, 140px)', background: 'rgba(0,0,0,0.4)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                          <ThumbnailImage 
-                            src={`${API_URL}/workspace/thumbnail/${file.channelId}/${file.id}`}
+                            src={`${API_URL}/workspace/thumbnail/${file.channelId}/${file.id}?token=${localStorage.getItem('token')}`}
                             fallback={getFileIcon(file.type, '#FACC15')}
                          />
                          <div className="hover-play" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.3)', opacity: 0 }}><Eye size={24} color="#fff" /></div>
@@ -658,11 +669,21 @@ const Dashboard = () => {
                         </div>
                       )}
 
-                      <div style={{ flex: 1, minWidth: 0, textAlign: 'left', cursor: 'pointer' }} onClick={() => openPreview(file)}>
-                        <div style={{ fontWeight: 600, fontSize: 'clamp(0.7rem, 2vw, 0.9rem)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={file.name}>
-                          {truncateFileName(file.name, file.id, window.innerWidth < 768 ? 16 : 24)}
+                      <div style={{ flex: 1, minWidth: 0, textAlign: 'left', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px' }} onClick={() => openPreview(file)}>
+                        {viewMode === 'list' && (
+                          <div style={{ width: '40px', height: '40px', minWidth: '40px', borderRadius: '8px', overflow: 'hidden', background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                             <ThumbnailImage 
+                                src={`${API_URL}/workspace/thumbnail/${file.channelId}/${file.id}?token=${localStorage.getItem('token')}`}
+                                fallback={getFileIcon(file.type, '#FACC15')}
+                             />
+                          </div>
+                        )}
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontWeight: 600, fontSize: 'clamp(0.7rem, 2vw, 0.9rem)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={file.name}>
+                            {truncateFileName(file.name, file.id, window.innerWidth < 768 ? 16 : 24)}
+                          </div>
+                          <div style={{ fontSize: 'clamp(0.6rem, 1.5vw, 0.75rem)', color: 'var(--text-secondary)' }}>{formatSize(file.size)}</div>
                         </div>
-                        <div style={{ fontSize: 'clamp(0.6rem, 1.5vw, 0.75rem)', color: 'var(--text-secondary)' }}>{formatSize(file.size)}</div>
                       </div>
 
                       {/* Action Buttons Row */}
