@@ -12,7 +12,7 @@ import Sidebar from '../components/Sidebar';
 import FolderCard from '../components/FolderCard';
 import SettingsView from '../components/SettingsView';
 import TelegramManager from '../components/TelegramManager';
-import { API_URL, API_BASE_URL } from '../config';
+import { API_URL, API_BASE_URL, getAuthToken } from '../config';
 
 
 
@@ -516,7 +516,7 @@ const Dashboard = () => {
     // For now, I'll fetch settings on mount or use a global-ish state if available.
     // Actually, I can just read it from the localStorage or a quick check.
     const isDataSaver = localStorage.getItem('telenest_datasaver') === 'true';
-    const token = localStorage.getItem('token') || '';
+    const token = getAuthToken() || '';
     return `${API_URL}/workspace/view/${activeFolder}/${file.id}?source=${source}&channelId=${file.channelId}${isDataSaver ? '&dataSaver=true' : ''}&token=${token}`;
   };
 
@@ -579,7 +579,7 @@ const Dashboard = () => {
                             {viewMode === 'grid' && (
                               <div className="file-card-preview" onClick={() => openPreview(file)} style={{ width: '100%', height: '140px', background: 'rgba(0,0,0,0.4)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                                  <ThumbnailImage 
-                                    src={`${API_URL}/workspace/thumbnail/${file.channelId}/${file.id}?token=${localStorage.getItem('token')}`}
+                                    src={`${API_URL}/workspace/thumbnail/${file.channelId}/${file.id}?token=${getAuthToken()}`}
                                     fallback={getFileIcon(file.type, '#FACC15')}
                                  />
                                  <div className="hover-play" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.3)', opacity: 0 }}><Eye size={32} color="#fff" /></div>
@@ -590,7 +590,7 @@ const Dashboard = () => {
                                 {viewMode === 'list' && (
                                   <div style={{ width: '40px', height: '40px', minWidth: '40px', borderRadius: '8px', overflow: 'hidden', background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                      <ThumbnailImage 
-                                        src={`${API_URL}/workspace/thumbnail/${file.channelId}/${file.id}?token=${localStorage.getItem('token')}`}
+                                        src={`${API_URL}/workspace/thumbnail/${file.channelId}/${file.id}?token=${getAuthToken()}`}
                                         fallback={getFileIcon(file.type, '#FACC15')}
                                      />
                                   </div>
@@ -653,7 +653,7 @@ const Dashboard = () => {
                     {viewMode === 'grid' && (
                       <div className="file-card-preview" onClick={() => openPreview(file)} style={{ width: '100%', height: 'clamp(80px, 18vw, 140px)', background: 'rgba(0,0,0,0.4)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
                          <ThumbnailImage 
-                            src={`${API_URL}/workspace/thumbnail/${file.channelId}/${file.id}?token=${localStorage.getItem('token')}`}
+                            src={`${API_URL}/workspace/thumbnail/${file.channelId}/${file.id}?token=${getAuthToken()}`}
                             fallback={getFileIcon(file.type, '#FACC15')}
                          />
                          <div className="hover-play" style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.3)', opacity: 0 }}><Eye size={24} color="#fff" /></div>
@@ -673,7 +673,7 @@ const Dashboard = () => {
                         {viewMode === 'list' && (
                           <div style={{ width: '40px', height: '40px', minWidth: '40px', borderRadius: '8px', overflow: 'hidden', background: 'rgba(0,0,0,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                              <ThumbnailImage 
-                                src={`${API_URL}/workspace/thumbnail/${file.channelId}/${file.id}?token=${localStorage.getItem('token')}`}
+                                src={`${API_URL}/workspace/thumbnail/${file.channelId}/${file.id}?token=${getAuthToken()}`}
                                 fallback={getFileIcon(file.type, '#FACC15')}
                              />
                           </div>
