@@ -119,7 +119,7 @@ const Dashboard = () => {
   const [selectedFiles, setSelectedFiles] = useState<any[]>([]);
   const [isActionModalOpen, setIsActionModalOpen] = useState(false);
   const [actionType, setActionType] = useState<'move' | 'copy' | null>(null);
-  const [, setIsProcessing] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   
   const [isNewFolderModalOpen, setIsNewFolderModalOpen] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
@@ -361,6 +361,21 @@ const Dashboard = () => {
   useEffect(() => { fetchFolders(); }, []);
 
   const [uploadStats, setUploadStats] = useState<{ total: number, done: number }>({ total: 0, done: 0 });
+
+  const handleRefreshStats = async () => {
+    try {
+      setIsProcessing(true);
+      const res = await axios.post(`${API_URL}/workspace/refresh-stats`);
+      if (res.data.success) {
+        setFolders(Object.entries(res.data.db).map(([name, data]: [string, any]) => ({ name, ...data })));
+        showToast('Storage statistics updated!', 'success');
+      }
+    } catch (err) {
+      showToast('Failed to refresh stats', 'error');
+    } finally {
+      setIsProcessing(false);
+    }
+  };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
@@ -1020,6 +1035,10 @@ const Dashboard = () => {
                 <span className="desktop-only">{isUploading ? `Uploading...` : 'Upload'}</span>
             </motion.button>
             <input type="file" multiple ref={fileInputRef} style={{ display: 'none' }} onChange={handleFileUpload} />
+            
+            <button className={`btn-icon ${isProcessing ? 'spinning' : ''}`} onClick={handleRefreshStats} disabled={isProcessing} title="Refresh Storage Statistics">
+                <RefreshCw size={20} />
+            </button>
             
             <button className="btn-icon" onClick={() => setShowNotifications(!showNotifications)} style={{ position: 'relative' }}>
                 <Bell size={20} />
